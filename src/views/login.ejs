@@ -1,0 +1,94 @@
+<%- include('includes/header')%>
+<link rel="stylesheet" type="text/css" href="/css/login.css" />
+<link
+  rel="stylesheet"
+  href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+  integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+  crossorigin="anonymous"
+/>
+
+<body class="login-body">
+  <div class="login-container" id="login-container">
+    <div class="form-container sign-up-container">
+      <form
+        class="log-sign-form"
+        onsubmit="return validateSignupForm()"
+        action="/admin/signup"
+        method="POST"
+        enctype="multipart/form-data"
+      >
+        <h1 class="login-title">Create Account</h1>
+        <span>or use your email for registration</span>
+        <input
+          type="text"
+          placeholder="Username"
+          name="memberNick"
+          class="memberNick"
+          value=""
+        />
+        <input
+          type="email"
+          placeholder="Email"
+          class="memberEmail"
+          name="memberEmail"
+          value=""
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          name="memberPassword"
+          class="memberPassword"
+          value=""
+        />
+        <div class="image-upload">
+          <img class="upload-img" src="/img/default.jpeg" />
+          <input
+            type="file"
+            id="input-file"
+            class="member-image"
+            name="memberImage"
+            hidden
+          />
+          <label for="input-file" class="file-input-label">Upload Image</label>
+        </div>
+        <button>Sign Up</button>
+      </form>
+    </div>
+    <div class="form-container sign-in-container">
+      <form class="log-sign-form" action="/admin/login" METHOD="POST">
+        <h1 class="login-title">Login</h1>
+        <span>welcome back, boss!</span>
+        <input placeholder="Username" type="text" name="memberNick" required />
+        <input
+          type="password"
+          placeholder="Password"
+          name="memberPassword"
+          required
+        />
+        <a href="/admin">back home</a>
+        <button name="login" type="submit">Login</button>
+      </form>
+    </div>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1 class="login-title">Welcome Back!</h1>
+          <p class="login-subtitle">
+            To keep connected with us please login with your personal info
+          </p>
+          <button class="ghost" id="signIn">Sign In</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1 class="login-title">Hello, Boss!</h1>
+          <p class="login-subtitle">
+            Enter your personal details and start journey with us
+          </p>
+          <button class="ghost" id="signUp">Sign Up</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/login.js"></script>
+</body>
+
+<%- include('includes/footer')%>

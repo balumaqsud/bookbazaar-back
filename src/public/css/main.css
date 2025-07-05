@@ -1,0 +1,13 @@
+.welcome {
+  color: firebrick;
+  text-align: center;
+  margin-top: 20px;
+}
+
+a {
+  color: white;
+}
+
+body {
+  font-family: monospace;
+}
