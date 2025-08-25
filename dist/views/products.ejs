@@ -1,0 +1,225 @@
+<%- include('includes/header')%>
+<link rel="stylesheet" type="text/css" href="/css/product.css" />
+<body>
+  <div class="products-container">
+    <div class="navigation">
+      <ul class="nav">
+        <li class="nav-item">
+          <a class="nav-link active" href="/admin">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/product/all">Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/admin/user/all">Users</a>
+        </li>
+        <li
+          class="nav-item"
+          onclick="return confirm('Do you want to logout?')"
+        >
+          <a class="nav-link" href="/admin/logout">Logout</a>
+        </li>
+      </ul>
+    </div>
+    <div class="product-book-frame">
+      <div class="board">
+        <div class="product-table">
+          <span class="new-book-txt" style="margin-bottom: 30px">
+            Books
+          </span>
+          <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+              <tr class="thead-light">
+                <th scope="col">T/r</th>
+                <th scope="col">Book Name</th>
+                <th scope="col">Book Type</th>
+                <th scope="col">Book Category</th>
+                <th scope="col">Book Description</th>
+                <th scope="col">Book Price</th>
+                <th scope="col">Book left Count</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <!--  LOOP PRODUCTS: START  -->
+           <%products.map((ele, index)=> { %>
+             <tbody style="background: white" >
+              <tr  data-id="<%= ele._id %>">
+              <td ><%=index+1%></td>
+              <td class="property" data-field="productName"><%=ele.productName%></td>
+              <td class="property" data-field="productType"><%=ele.productType%></td>
+              <td class="property" data-field="productCategory"><%=ele.productCategory%></td>
+              <td class="property" data-field="productDesc"><%=typeof ele.productDesc === 'string' && ele.productDesc.length > 70 ? ele.productDesc.substring(0, 50) + "..." : ele.productDesc%></td>
+              <td class="property" data-field="productPrice"><%=ele.productPrice%></td>
+              <td class="property" data-field="productLeftCount"><%=ele.productLeftCount%></td>
+              <td>
+                <select class="spec-select new-product-status" id="<%=ele._id%>">
+                  <option value="PAUSE" <%= ele.productStatus === "PAUSE"? "selected" : ""%> >PAUSE</option>
+                  <option value="PROCESS" <%= ele.productStatus === "PROCESS"? "selected" : ""%>>PROCESS</option>
+                  <option value="DELETE" <%= ele.productStatus === "DELETE"? "selected" : ""%>>DELETE</option>
+                </select>
+              </td>
+              </tr>
+            </tbody>
+
+            <% }) %>
+            <!--  LOOP PRODUCTS: END  -->
+          </table>
+          <div
+            class="operation-buttons"
+          >
+            <button class="btn btn-primary" id="process-btn">
+              New Book
+            </button>
+          </div>
+        </div>
+        <form
+        onsubmit="return validateForm()"
+          action="/admin/product/create"
+          method="POST"
+          class="book-container"
+          enctype="multipart/form-data"
+        >
+          <div class="long-input" style="display: flex; align-items: center">
+            <span class="new-book-txt">New book detail</span>
+          </div>
+          <div class="login-input-frame">
+            <div class="long-input">
+              <label>Book Name:</label>
+              <input
+                type="text"
+                placeholder="Name"
+                name="productName"
+                class="product-name"
+              />
+            </div>
+            <input
+              name="productStatus"
+              value="PAUSE"
+              class="product-status"
+              hidden
+            />
+          </div>
+          <div class="half-input-frame">
+            <div class="half-input">
+              <label>Book Price:</label>
+              <input
+                type="number"
+                placeholder="Price"
+                name="productPrice"
+                class="product-price"
+              />
+            </div>
+            <div class="half-input">
+              <label>Book Left Count:</label>
+              <input
+                type="number"
+                placeholder="Counts"
+                name="productLeftCount"
+                class="product-left-count"
+              />
+            </div>
+          </div>
+          <div class="half-input-frame">
+            <div class="half-input">
+              <label>Book Type:</label>
+              <select class="product-type" name="productType">
+                <option value="ELECTRONIC" selected>ELECTRONIC</option>
+                <option value="PHYSICAL">PHYSICAL</option>
+              
+              </select>
+            </div>
+
+            <div class="half-input" id="product-category">
+              <label>Book category:</label>
+              <select class="product-category" name="productCategory">
+                <option value="HORROR">HORROR</option>
+                <option value="FANTASY" >FANTASY</option>
+                <option value="SCIENCE_FICTION">SCIENCE_FICTION</option>
+                <option value="ROMANCE">ROMANCE</option>
+                <option value="KIDS">KIDS</option>
+                <option value="POETRY">POETRY</option>
+                <option value="ADVENTURE" selected>ADVENTURE</option>
+                <option value="THRILLER">THRILLER</option>
+              </select>
+            </div>
+          </div>
+          <div class="long-input">
+            <label>Book Description:</label>
+            <textarea rows="10" name="productDesc" class="product-desc"></textarea>
+          </div>
+
+          <div class="img-frame">
+            <label>Book Images:</label>
+            <div class="media-frame">
+              <div class="upload-img-box">
+                <img src="/img/default.jpeg" class="1" id="image-section-1"
+                />
+                <input
+                  type="file"
+                  id="file"
+                  name="productImages"
+                  class="image-one"
+                  required
+                  onchange="previewProductPhoto(this, 1)"
+                />
+              </div>
+              <div class="upload-img-box">
+                <img src="/img/default.jpeg" class="2" id="image-section-2" 
+                />
+                <input
+                  type="file"
+                  id="file"
+                  name="productImages"
+                  class="image-two"
+                  onchange="previewProductPhoto(this, 2)"
+                />
+              </div>
+              <div class="upload-img-box">
+                <img src="/img/default.jpeg" class="3" id="image-section-3" />
+                <input
+                  type="file"
+                  id="file"
+                  name="productImages"
+                  class="image-three"
+                  onchange="previewProductPhoto(this, 3)"
+                />
+              </div>
+              <div class="upload-img-box">
+                <img src="/img/default.jpeg" class="4" id="image-section-4" />
+                <input
+                  type="file"
+                  id="file"
+                  name="productImages"
+                  class="image-four"
+                  onchange="previewProductPhoto(this, 4)"
+                />
+              </div>
+              <div class="upload-img-box">
+                <img src="/img/default.jpeg" class="5" id="image-section-5" />
+                <input
+                  type="file"
+                  id="file"
+                  name="productImages"
+                  class="image-five"
+                  onchange="previewProductPhoto(this, 5)"
+                />
+              </div>
+              <input name="restaurantIid" class="restaurant-id" hidden />
+            </div>
+          </div>
+
+          <div class="operation-buttons">
+            <button class="btn btn-cancel" id="cancel-btn">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="create-btn">
+              Create
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+  
+  <script src="/js/product.js"></script>
+</body>
+<%- include('includes/footer')%>
