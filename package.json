@@ -7,8 +7,9 @@
     "start": "ts-node src/server.ts",
     "start:dev": "nodemon --exec ts-node src/server.ts",
     "dev": "nodemon --exec ts-node src/server.ts",
+    "start:prod": "NODE_ENV=production node dist/server.js",
     "train": "nodemon --exec ts-node src/train.ts",
-    "build": "tsc",
+    "build": "tsc && node extra.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -30,6 +31,7 @@
     "@types/uuid": "^10.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
+    "fs-extra": "^11.1.1",
     "nodemon": "^3.1.9",
     "sass": "^1.89.0",
     "ts-node": "^10.9.1",
