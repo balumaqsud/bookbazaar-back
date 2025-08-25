@@ -66,15 +66,17 @@ class OrderService {
     member: Member,
     inquiry: OrderInquiry
   ): Promise<any> {
+    console.log(typeof member._id);
     const memberId = convertToMongoDbId(member._id);
-    const matches = {
-      memberId: memberId,
-      orderStatus: inquiry.orderStatus,
-    };
+
+    console.log("inquery", inquiry);
+    console.log("memberId", typeof memberId);
+    const matches = { memberId: memberId, orderStatus: inquiry.orderStatus };
+
     const result = await this.orderModel
       .aggregate([
         { $match: matches },
-        { $sort: { updatedAt: -1 } },
+        { $sort: { updateAt: -1 } },
         { $skip: (inquiry.page - 1) * inquiry.limit },
         { $limit: inquiry.limit },
         {
@@ -88,19 +90,16 @@ class OrderService {
         {
           $lookup: {
             from: "products",
-            localField: "orderItems.productId", //123
-            foreignField: "_id", //123
+            localField: "orderItems.productId",
+            foreignField: "_id",
             as: "productData",
           },
         },
       ])
       .exec();
-
     if (!result) throw new Errors(HttpCode.NOT_FOUND, Message.NO_DATA_FOUND);
-
     return result;
   }
-
   public async updateOrder(
     member: Member,
     input: OrderUpdateInput
@@ -121,6 +120,7 @@ class OrderService {
     if (orderStatus === OrderStatus.PROCESS) {
       await this.memberService.addUserPoint(member);
     }
+    console.log(result);
     return result.toJSON() as Order;
   }
 }

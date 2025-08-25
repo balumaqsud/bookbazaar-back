@@ -12,6 +12,8 @@ dotenv.config();
 //for sessions
 import session from "express-session";
 import ConnectMongoDb from "connect-mongodb-session";
+import { Server as SocketServer } from "socket.io";
+import http from "http";
 
 //creating store object:
 const MongoStore = ConnectMongoDb(session);
@@ -58,4 +60,23 @@ app.set("view engine", "ejs");
 app.use("/", router); // will be build in React
 app.use("/admin", routerAdmin); // will be build in EJS
 
-export default app;
+const server = http.createServer(app);
+const io = new SocketServer(server, {
+  cors: {
+    origin: true,
+    credentials: true,
+  },
+});
+
+let connectedUsers = 0;
+io.on("connection", (socket) => {
+  console.log("a user connected");
+  connectedUsers++;
+  io.emit("connectedUsers", connectedUsers);
+  socket.on("disconnect", () => {
+    connectedUsers--;
+    io.emit("connectedUsers", connectedUsers);
+  });
+});
+
+export default server;
