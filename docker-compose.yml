@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  bookbaraar:
+    container_name: bookbaraar
+    restart: always
+    image: node:20.10.0
+    ports:
+      - "4004:3001"
+    volumes:
+      - ./:/usr/src/bookbaraar
+      - /usr/src/bookbaraar/node_modules
+    working_dir: /usr/src/bookbaraar
+    networks:
+      - bookbaraar-network
+    environment:
+      - NODE_ENV=production
+    command: bash -c "npm install --include=dev && ./node_modules/.bin/tsc && node extra.js && npm run start:prod"
+
+networks:
+  bookbaraar-network:
+    driver: bridge
