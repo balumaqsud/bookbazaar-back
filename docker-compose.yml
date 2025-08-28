@@ -14,7 +14,9 @@ services:
     networks:
       - bookbaraar-network
     environment:
+      - PORT=3001
       - NODE_ENV=production
+      - MONGO_URL=mongodb+srv://mypython25:cyrqah-sektYr-bitwe9@dairies.dyv5u.mongodb.net/chessMerch?retryWrites=true&w=majority&appName=dairies
     command: bash -c "npm install --include=dev && ./node_modules/.bin/tsc && node extra.js && npm run start:prod"
 
 networks:
