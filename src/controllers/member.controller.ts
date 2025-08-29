@@ -31,54 +31,55 @@ memberController.getAdmin = async (req: Request, res: Response) => {
 };
 memberController.signup = async (req: Request, res: Response) => {
   try {
-    console.log("SignUp");
+    console.log("signup here!");
+    console.log("body", req.body);
+
     const input: MemberInput = req.body,
-      result: Member = await memberService.signup(input),
-      token = await authService.createToken(result);
-    console.log(token);
+      result: Member = await memberService.signup(input);
+    const token = await authService.createToken(result);
+
     res.cookie("accessToken", token, {
       maxAge: AUTH_TIME * 3600 * 1000,
       httpOnly: false,
     });
-
     res.status(HttpCode.CREATED).json({ member: result, accessToken: token });
-  } catch (error) {
-    console.log("signup, error:", error);
-    if (error instanceof Errors) res.status(error.code).json(error);
+  } catch (err) {
+    console.log("ERROR on Signup page", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standard.code).json(Errors.standard);
   }
 };
 
 memberController.login = async (req: Request, res: Response) => {
   try {
-    console.log("login");
+    console.log("login here");
     const input: LoginInput = req.body,
-      result: Member = await memberService.login(input),
-      token = await authService.createToken(result);
+      result: Member = await memberService.login(input);
+    const token = await authService.createToken(result);
 
     res.cookie("accessToken", token, {
       maxAge: AUTH_TIME * 3600 * 1000,
       httpOnly: false,
     });
-
     res.status(HttpCode.OK).json({ member: result, accessToken: token });
-  } catch (error) {
-    console.log("login, error:", error);
-    if (error instanceof Errors) res.status(error.code).json(error.message);
+  } catch (err) {
+    console.log("ERROR on Login page", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standard.code).json(Errors.standard);
   }
 };
 
-memberController.logout = (req: ExtendedRequest, res: Response) => {
+memberController.logout = async (req: ExtendedRequest, res: Response) => {
   try {
-    console.log("logout page");
-    const input: ExtendedRequest = req.body;
-
-    res.cookie("accessToken", null, { maxAge: 0, httpOnly: true });
+    console.log("logout here");
+    res.cookie("accessToken", null, {
+      maxAge: 0,
+      httpOnly: true,
+    });
     res.status(HttpCode.OK).json({ logout: true });
-  } catch (error) {
-    console.log("home error: ", error);
-    if (error instanceof Errors) res.status(error.code).json(error.message);
+  } catch (err) {
+    console.log("ERROR on logout page", err);
+    if (err instanceof Errors) res.status(err.code).json(err);
     else res.status(Errors.standard.code).json(Errors.standard);
   }
 };

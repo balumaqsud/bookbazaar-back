@@ -7,9 +7,11 @@ class AuthService {
   private readonly secret_token;
   constructor() {
     this.secret_token = process.env.SECRET_TOKEN as string;
+    console.log("process.env.SECRET_TOKEN", process.env.SECRET_TOKEN);
+    console.log("secret_token", this.secret_token);
   }
 
-  public async createToken(payload: Member) {
+  public createToken(payload: Member) {
     return new Promise((resolve, reject) => {
       const duration = `${AUTH_TIME}h`;
       jwt.sign(
@@ -18,24 +20,21 @@ class AuthService {
         {
           expiresIn: duration,
         },
-        (error, token) => {
-          if (error) {
-            console.error("JWT token creation error:", error);
+        (err, token) => {
+          if (err)
             reject(
               new Errors(HttpCode.UNAUTHORIZED, Message.TOKEN_CREATION_FAIL)
             );
-          } else {
-            resolve(token as string);
-          }
+          else resolve(token as string);
         }
       );
     });
   }
 
   public async checkAuth(token: string): Promise<Member> {
-    const result: Member = (await jwt.verify(
+    const result = (await jwt.verify(
       token,
-      process.env.SECRET_TOKEN as string
+      this.secret_token as string
     )) as Member;
     console.log(`member nick check: ${result.memberNick}`);
     return result;

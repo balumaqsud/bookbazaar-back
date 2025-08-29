@@ -30,7 +30,6 @@ class MemberService {
 
   //signin process
   //SPA
-
   public async signup(input: MemberInput): Promise<Member> {
     const salt = await bcrypt.genSalt();
     input.memberPassword = await bcrypt.hash(input.memberPassword, salt);
@@ -38,14 +37,13 @@ class MemberService {
     try {
       const result = await this.memberModel.create(input);
       result.memberPassword = "";
-      return result.toJSON() as Member;
-    } catch (error) {
-      throw new Errors(HttpCode.BAD_REQUEST, Message.USED_NICK_PHONE);
+      return result.toJSON() as unknown as Member;
+    } catch (err) {
+      console.log("ERROR on model: signup", err);
+      throw new Errors(HttpCode.BAD_REQUEST, Message.CREATE_FAILED);
     }
   }
-
   public async login(input: LoginInput): Promise<Member> {
-    const status = console.log(input);
     const member = await this.memberModel
       .findOne(
         {
@@ -55,21 +53,26 @@ class MemberService {
         { memberNick: 1, memberPassword: 1, memberStatus: 1 }
       )
       .exec();
-    if (!member) throw new Errors(HttpCode.NOT_FOUND, Message.USER_NOT_FOUND);
-    else if (member.memberStatus === MemberStatus.BLOCK) {
+
+    if (!member) {
+      throw new Errors(HttpCode.UNAUTHORIZED, Message.USER_NOT_FOUND);
+    } else if (member.memberStatus === MemberStatus.BLOCK) {
       throw new Errors(HttpCode.FORBIDDEN, Message.BLOCKED_USER);
     }
 
+    if (!member.memberPassword) {
+      throw new Error("Password is undefined");
+    }
     const isMatch = await bcrypt.compare(
       input.memberPassword,
       member.memberPassword
     );
-    if (!isMatch)
+    if (!isMatch) {
       throw new Errors(HttpCode.UNAUTHORIZED, Message.WRONG_PASSWORD);
+    }
 
-    //lean() cannot be used for further errors it makes
-    const result = await this.memberModel.findById(member._id).exec();
-    return result?.toJSON() as Member;
+    const result = await this.memberModel.findById(member._id).lean().exec();
+    return result as any as Member;
   }
 
   //SSR
