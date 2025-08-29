@@ -50,7 +50,7 @@ class AuthService {
                 expiresIn: duration,
             }, (error, token) => {
                 if (error) {
-                    console.log(error);
+                    console.error("JWT token creation error:", error);
                     reject(new Errors_1.default(Errors_1.HttpCode.UNAUTHORIZED, Errors_1.Message.TOKEN_CREATION_FAIL));
                 }
                 else {

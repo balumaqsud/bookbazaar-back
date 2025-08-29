@@ -14,13 +14,13 @@ class AuthService {
       const duration = `${AUTH_TIME}h`;
       jwt.sign(
         payload,
-        process.env.SECRET_TOKEN as string,
+        this.secret_token as string,
         {
           expiresIn: duration,
         },
         (error, token) => {
           if (error) {
-            console.log(error);
+            console.error("JWT token creation error:", error);
             reject(
               new Errors(HttpCode.UNAUTHORIZED, Message.TOKEN_CREATION_FAIL)
             );
