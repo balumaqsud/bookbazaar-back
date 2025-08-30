@@ -65,29 +65,33 @@ class MemberService {
             result.memberPassword = "";
             return result.toJSON();
         }
-        catch (error) {
-            throw new Errors_1.default(Errors_1.HttpCode.BAD_REQUEST, Errors_1.Message.USED_NICK_PHONE);
+        catch (err) {
+            console.log("ERROR on model: signup", err);
+            throw new Errors_1.default(Errors_1.HttpCode.BAD_REQUEST, Errors_1.Message.CREATE_FAILED);
         }
     }
     async login(input) {
-        const status = console.log(input);
         const member = await this.memberModel
             .findOne({
             memberNick: input.memberNick,
             memberStatus: { $ne: member_enum_1.MemberStatus.DELETE },
         }, { memberNick: 1, memberPassword: 1, memberStatus: 1 })
             .exec();
-        if (!member)
-            throw new Errors_1.default(Errors_1.HttpCode.NOT_FOUND, Errors_1.Message.USER_NOT_FOUND);
+        if (!member) {
+            throw new Errors_1.default(Errors_1.HttpCode.UNAUTHORIZED, Errors_1.Message.USER_NOT_FOUND);
+        }
         else if (member.memberStatus === member_enum_1.MemberStatus.BLOCK) {
             throw new Errors_1.default(Errors_1.HttpCode.FORBIDDEN, Errors_1.Message.BLOCKED_USER);
         }
+        if (!member.memberPassword) {
+            throw new Error("Password is undefined");
+        }
         const isMatch = await bcryptjs_1.default.compare(input.memberPassword, member.memberPassword);
-        if (!isMatch)
+        if (!isMatch) {
             throw new Errors_1.default(Errors_1.HttpCode.UNAUTHORIZED, Errors_1.Message.WRONG_PASSWORD);
-        //lean() cannot be used for further errors it makes
-        const result = await this.memberModel.findById(member._id).exec();
-        return result?.toJSON();
+        }
+        const result = await this.memberModel.findById(member._id).lean().exec();
+        return result;
     }
     //SSR
     //signin process

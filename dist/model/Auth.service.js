@@ -41,26 +41,23 @@ const config_1 = require("../libs/config");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 class AuthService {
     constructor() {
-        this.secret_token = process.env.SECRET_TOKEN;
+        this.secret_token = config_1.SECRET_TOKEN;
     }
-    async createToken(payload) {
+    createToken(payload) {
         return new Promise((resolve, reject) => {
             const duration = `${config_1.AUTH_TIME}h`;
-            jsonwebtoken_1.default.sign(payload, process.env.SECRET_TOKEN, {
+            jsonwebtoken_1.default.sign(payload, this.secret_token, {
                 expiresIn: duration,
-            }, (error, token) => {
-                if (error) {
-                    console.error("JWT token creation error:", error);
+            }, (err, token) => {
+                if (err)
                     reject(new Errors_1.default(Errors_1.HttpCode.UNAUTHORIZED, Errors_1.Message.TOKEN_CREATION_FAIL));
-                }
-                else {
+                else
                     resolve(token);
-                }
             });
         });
     }
     async checkAuth(token) {
-        const result = (await jsonwebtoken_1.default.verify(token, process.env.SECRET_TOKEN));
+        const result = (await jsonwebtoken_1.default.verify(token, this.secret_token));
         console.log(`member nick check: ${result.memberNick}`);
         return result;
     }

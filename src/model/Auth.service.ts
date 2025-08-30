@@ -1,14 +1,12 @@
 import Errors, { HttpCode, Message } from "../libs/Errors";
-import { AUTH_TIME } from "../libs/config";
+import { AUTH_TIME, SECRET_TOKEN } from "../libs/config";
 import { Member } from "../libs/types/member";
 import jwt from "jsonwebtoken";
 
 class AuthService {
   private readonly secret_token;
   constructor() {
-    this.secret_token = process.env.SECRET_TOKEN as string;
-    console.log("process.env.SECRET_TOKEN", process.env.SECRET_TOKEN);
-    console.log("secret_token", this.secret_token);
+    this.secret_token = SECRET_TOKEN;
   }
 
   public createToken(payload: Member) {
