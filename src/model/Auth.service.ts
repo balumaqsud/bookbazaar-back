@@ -6,7 +6,7 @@ import jwt from "jsonwebtoken";
 class AuthService {
   private readonly secret_token;
   constructor() {
-    this.secret_token = SECRET_TOKEN;
+    this.secret_token = SECRET_TOKEN || "sbalu23507abdulla2000maqsud112";
   }
 
   public createToken(payload: Member) {
