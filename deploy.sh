@@ -7,7 +7,7 @@ git pull origin main
 
 docker compose down
 docker compose up -d
-docker compose logs --tail=200 -f
+docker compose logs --tail 200 -f
 
 
 
